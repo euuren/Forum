@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Questions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .table-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .badge {
+            margin-right: 5px;
+        }
+        .question-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .question-title:hover {
+            text-decoration: underline;
+        }
+        .user-info {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .count-container {
+            text-align: center;
+            font-size: 1.2em;
+        }
+        .count-label {
+            font-size: 0.8em;
+            color: #6c757d;
+        }
+        .filter-buttons {
+            margin-bottom: 20px;
+        }
+        .filter-buttons .btn {
+            margin-right: 10px;
+        }
+        .filter-buttons .btn-active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <%- include('topbar') %>
+    <hr style="border: none">
+    <section class="main-content920">
+        <div class="table-container">
+            <div class="filter-label">
+                <p><i class="fas fa-filter"></i> <strong> Filters:</strong></p>
+            </div>
+            <div class="filter-buttons">
+                <button id="filter-hot" class="btn btn-outline-primary">
+                    <i class="fas fa-fire"></i> Hot
+                </button>
+                <button id="filter-mostAnswered" class="btn btn-outline-primary">
+                    <i class="fas fa-trophy"></i> Most Answered
+                </button>
+                <button id="filter-recent" class="btn btn-outline-primary">
+                    <i class="fas fa-clock"></i> Most Recent
+                </button>
+            </div>
+            <table class="table">
+                <tbody>
+                    <% questions.forEach(({_id, title, tags, votes, answers, created, authorUsername}) => { %>
+                        <tr data-date="<%= new Date(created).toISOString() %>">
+                            <!-- Question Details -->
+                            <td data-date = "<%= created %>">
+                                <!-- Question Title -->
+                                <a href="/questions/<%= _id %>" class="question-title"><%= title %></a>
+
+                                <!-- Tags -->
+                                <div class="mt-2">
+                                    <% tags.forEach(tag => { %>
+                                        <span class="badge bg-dark"><%= tag %></span>
+                                    <% }) %>
+                                </div>
+
+                                <!-- Username and Time Asked -->
+                                <div class="user-info mt-2">
+                                    Asked by <%= authorUsername %> on <%= created.toLocaleString() %>
+                                </div>
+                            </td>
+                            <!-- Votes -->
+                            <td>
+                                <div class="count-container">
+                                    <div><%= votes %></div>
+                                    <div class="count-label">Votes</div>
+                                </div>
+                            </td>
+
+                            <!-- Answers -->
+                            <td>
+                                <div class="count-container">
+                                    <div class="answers-count"><%= answers.length %></div>
+                                    <div class="count-label">Answers</div>
+                                </div>
+                            </td>                  
+                        </tr> <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const filterHot = document.getElementById('filter-hot');
+        const filterMostAnswered = document.getElementById('filter-mostAnswered');
+        const filterRecent = document.getElementById('filter-recent');
+
+        filterHot.addEventListener('click', () => {
+            filterHot.classList.add('btn-active');
+            filterMostAnswered.classList.remove('btn-active');
+            filterRecent.classList.remove('btn-active');
+
+            const sortedPosts = Array.from(document.querySelectorAll('tbody tr')).sort((a, b) => {
+                const votesA = parseInt(a.querySelector('.count-container div').textContent);
+                const votesB = parseInt(b.querySelector('.count-container div').textContent);
+                return votesB - votesA;
+            });
+
+            updatePostsDisplay(sortedPosts);
+        });
+
+        filterMostAnswered.addEventListener('click', () => {
+            filterMostAnswered.classList.add('btn-active');
+            filterHot.classList.remove('btn-active');
+            filterRecent.classList.remove('btn-active');
+
+            const sortedPosts = Array.from(document.querySelectorAll('tbody tr')).sort((a, b) => {
+                const answersA = parseInt(a.querySelector('.answers-count').textContent);
+                const answersB = parseInt(b.querySelector('.answers-count').textContent);
+                return answersB - answersA;
+            });
+
+            updatePostsDisplay(sortedPosts);
+        });
+
+        filterRecent.addEventListener('click', () => {
+            filterRecent.classList.add('btn-active');
+            filterHot.classList.remove('btn-active');
+            filterMostAnswered.classList.remove('btn-active');
+
+            const sortedPosts = Array.from(document.querySelectorAll('tbody tr')).sort((a, b) => {
+                const dateA = new Date(a.getAttribute('data-date'));
+                const dateB = new Date(b.getAttribute('data-date'));
+                return dateB - dateA;
+            });
+
+            updatePostsDisplay(sortedPosts);
+        });
+
+        function updatePostsDisplay(sortedPosts) {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            sortedPosts.forEach((post, index) => {
+                tbody.appendChild(post);
+            });
+        }
+    </script>
+</body>
+</html>

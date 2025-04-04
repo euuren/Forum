@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+    .question-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #007bff;
+        text-decoration: none;
+    }
+    .question-title:hover {
+        text-decoration: underline;
+    }
+</style>
+<body>
+    <%- include('topbar') %>
+    <hr style="border: none">
+    <section class="main-content920">
+        <div class="container">
+            <h2>Search Results for: <%= searchQuery %></h2>
+            <% if (questions.length > 0) { %>
+                <table class="table">
+                    <tbody>
+                        <% questions.forEach(question => { %>
+                            <tr>
+                                <td>
+                                    <div class="question-title"><a href="/questions/<%= question._id %>" class="question-title"><%= question.title %></a></div>
+                                    <div class="mt-2">
+                                        <% question.tags.forEach(tag => { %>
+                                            <span class="badge bg-dark"><%= tag %></span>
+                                        <% }) %>
+                                    </div>
+                                    <div class="user-info mt-2">
+                                        Asked by <%= question.authorUsername %> on <%= question.created.toLocaleString() %>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>No questions found for the tags: <%= searchQuery %></p>
+            <% } %>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .profile-img {
+            width: 128px;
+            height: 128px;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <%- include('topbar') %>
+
+    <div class="d-flex flex-column align-items-center justify-content-center min-vh-100">
+        <div class="card text-center" style="width: 24rem; height: 24rem;">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <img class="rounded-circle border border-primary mb-3 profile-img" src="<%= user.profileImage || '/uploads/placeholder.jpg' %>" alt="Profile Image">
+                <h2 class="card-title"><%= user.username %></h2>
+                <p class="text-muted"><%= user.email %></p>
+                <p class="card-text"><%= user.bio %></p>
+            </div>
+        </div>
+        
+        <hr>
+
+        <div class="text-center">
+            <a href="/users/editmyprofile" class="btn btn-primary d-inline-block">Edit My Profile</a>
+            <a href="/users/logout" class="btn btn-danger d-inline-block ms-3">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
